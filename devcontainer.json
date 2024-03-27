@@ -1,0 +1,9 @@
+{
+    "name": "Debian Latest Dev Container",
+    "image": "debian:latest",
+    "settings": { 
+      "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [],
+    "postCreateCommand": "apt-get update && apt-get install -y build-essential"
+  }
