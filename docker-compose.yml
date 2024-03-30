@@ -1,3 +1,12 @@
+version: '3.8'
 services:
-  test:
-    image: debian:12
+  app:
+    build:
+      context: .
+      dockerfile: docker/linux/Dockerfile
+      cache_from:
+        - ghcr.io/kaidokert/chromium/linux:latest
+    image: ghcr.io/kaidokert/chromium/linux:latest
+    platform: linux/amd64
+    environment:
+      - DEPOT_TOOLS_UPDATE=0

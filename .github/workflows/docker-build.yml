@@ -1,0 +1,91 @@
+name: Docker Build
+
+on: [push]
+
+jobs:
+  docker-build-image:
+    runs-on: ubuntu-latest
+
+    env:
+      docker_tag: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref_name }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Dump context
+      uses: crazy-max/ghaction-dump-context@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Pull just in case
+      run: docker pull ghcr.io/${{ github.repository }}/linux
+
+    - name: Build containers using docker-compose
+      run: docker-compose build
+
+    - name: Re-tag
+      run: docker tag ghcr.io/${{ github.repository }}/linux:latest ghcr.io/${{ github.repository }}/linux:${{ env.docker_tag }}
+
+    - name: List
+      run: docker image ls
+
+    - name: Work
+      run: docker push ghcr.io/${{ github.repository }}/linux:${{ env.docker_tag }}
+
+    outputs:
+      docker_tag: ghcr.io/${{ github.repository }}/linux:${{ env.docker_tag }}
+
+  build:
+    needs: [docker-build-image]
+    runs-on: ubuntu-latest
+    container: ${{ needs.docker-build-image.outputs.docker_tag }}
+    env:
+      DEPOT_TOOLS_UPDATE: 0
+      DEPOT_TOOLS_REPORT_BUILD: 0
+      DEPOT_TOOLS_COLLECT_METRICS: 0
+      DEPOT_TOOLS_METRICS: 0
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: src
+      - name: Dump context
+        uses: crazy-max/ghaction-dump-context@v2
+      - name: Echo bonkers
+        run: echo https://github.com/${{ github.repository }}
+      - name: Create .gclient file
+        run: |
+          cat << EOF > .gclient
+          solutions = [
+          { "name"        : 'src',
+            "deps_file"   : 'DEPS',
+            "url": 'https://github.com/${{ github.repository }}'
+            },
+          ]
+          EOF
+      - name: See things
+        run: ls -la
+      - name: Cat gclient file
+        run: cat .gclient
+      - name: Get depot tools
+        run: git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+      - name: Add directory to PATH
+        run: echo "$GITHUB_WORKSPACE/depot_tools" >> $GITHUB_PATH
+      - name: Check if it worked
+        run: gclient --version
+      - name: Gclient sync
+        run: gclient sync -v -r ${{ github.ref_name }}
+      - name: See More things
+        run: |
+          ls -la
+          ls -la src
+          ls -la src/third_party

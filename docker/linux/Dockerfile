@@ -1,11 +1,7 @@
+# Use the official Ubuntu image as the base
 FROM debian:12
 
-RUN apt update -qqy \
-    && apt -qqy upgrade \
-    && apt install -qqy --no-install-recommends \
-        generate-ninja \
-        python3-dev \
-    && apt-get clean autoclean \
-    && apt-get autoremove -y --purge \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && rm -rf /var/lib/{apt,cache,log}
+# Install any necessary dependencies
+RUN apt-get update && apt-get install -y \
+    curl python3-dev git \
+    && rm -rf /var/lib/apt/lists/*
