@@ -10,7 +10,7 @@ jobs:
       docker_tag: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref_name }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Dump context
       uses: crazy-max/ghaction-dump-context@v2
@@ -26,7 +26,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Pull just in case
-      run: docker pull ghcr.io/${{ github.repository }}/linux
+      run: docker pull ghcr.io/${{ github.repository }}/linux || true
 
     - name: Build containers using docker-compose
       run: docker-compose build
