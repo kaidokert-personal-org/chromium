@@ -71,7 +71,7 @@ jobs:
       - name: Cat gclient file
         run: cat .gclient
       - name: Gclient sync
-        run: gclient sync -v -r --shallow --no-history --nohooks --noprehooks ${{ github.ref_name }}
+        run: gclient sync -v --shallow --no-history --nohooks --noprehooks -r ${{ github.ref_name }}
       - name: See More things
         run: |
           ls -la
