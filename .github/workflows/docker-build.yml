@@ -10,7 +10,7 @@ jobs:
       docker_tag: ${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref_name }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Dump context
       uses: crazy-max/ghaction-dump-context@v2
@@ -45,7 +45,7 @@ jobs:
 
   build:
     needs: [docker-build-image]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-m # Larger Runner with 150gb ssd
     container: ${{ needs.docker-build-image.outputs.docker_tag }}
     env:
       DEPOT_TOOLS_UPDATE: 0
@@ -61,7 +61,7 @@ jobs:
       - name: Dump context
         uses: crazy-max/ghaction-dump-context@v2
       - name: Get depot tools
-        run: git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+        run: git clone -b dev https://github.com/kaidokert/depot_tools.git
       - name: Add directory to PATH
         run: echo "$GITHUB_WORKSPACE/depot_tools" >> $GITHUB_PATH
       - name: Check if it worked
@@ -71,9 +71,22 @@ jobs:
       - name: Cat gclient file
         run: cat .gclient
       - name: Gclient sync
-        run: gclient sync -v --shallow --no-history --nohooks --noprehooks -r ${{ github.ref_name }}
+        run: gclient sync -v --shallow --no-history --nohooks --noprehooks -r ${{ github.sha }}
+      - name: DF
+        run: df -h
+      - name: Du
+        run: du -ht 500M
+      - name: Du 2
+        run: du -x -ht 500M /
+      - name: Gclient sync with hooks
+        run: gclient runhooks -v -j 4
       - name: See More things
         run: |
           ls -la
           ls -la src
           ls -la src/third_party
+          echo done
+      - name: Try gn gen ?
+        run: |
+          cd src
+          gn gen out/Default
