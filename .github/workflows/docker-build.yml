@@ -65,3 +65,7 @@ jobs:
         run: |
           cd src
           gn gen out/Default
+      - name: Try ninja ?
+        run: |
+          cd src
+          ninja -C out/Default base_unittests
