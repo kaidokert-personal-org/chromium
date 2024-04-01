@@ -5,4 +5,5 @@ FROM debian:12
 RUN apt-get update && apt-get install -y \
     curl python3-dev git \
     xz-utils \
+    pkgconf \
     && rm -rf /var/lib/apt/lists/*
