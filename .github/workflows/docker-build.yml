@@ -11,35 +11,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
     - name: Dump context
       uses: crazy-max/ghaction-dump-context@v2
-
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
-
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v1
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Pull just in case
       run: docker pull ghcr.io/${{ github.repository }}/linux || true
-
     - name: Build containers using docker-compose
       run: docker-compose build
-
     - name: Re-tag
       run: docker tag ghcr.io/${{ github.repository }}/linux:latest ghcr.io/${{ github.repository }}/linux:${{ env.docker_tag }}
-
-    - name: List
-      run: docker image ls
-
     - name: Work
       run: docker push ghcr.io/${{ github.repository }}/linux:${{ env.docker_tag }}
-
     outputs:
       docker_tag: ghcr.io/${{ github.repository }}/linux:${{ env.docker_tag }}
 
@@ -64,28 +53,14 @@ jobs:
         run: git clone -b dev https://github.com/kaidokert/depot_tools.git
       - name: Add directory to PATH
         run: echo "$GITHUB_WORKSPACE/depot_tools" >> $GITHUB_PATH
-      - name: Check if it worked
-        run: gclient --version
       - name: Generate gclient file
         run: gclient config --name=src https://github.com/${{ github.repository }}
-      - name: Cat gclient file
-        run: cat .gclient
       - name: Gclient sync
-        run: gclient sync -v --shallow --no-history --nohooks --noprehooks -r ${{ github.sha }}
+        run: gclient sync -v --shallow --no-history -r ${{ github.sha }}
       - name: DF
         run: df -h
       - name: Du
         run: du -ht 500M
-      - name: Du 2
-        run: du -x -ht 500M /
-      - name: Gclient sync with hooks
-        run: gclient runhooks -v -j 4
-      - name: See More things
-        run: |
-          ls -la
-          ls -la src
-          ls -la src/third_party
-          echo done
       - name: Try gn gen ?
         run: |
           cd src
