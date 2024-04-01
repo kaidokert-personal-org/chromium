@@ -2,8 +2,7 @@ version: '3.8'
 services:
   app:
     build:
-      context: .
-      dockerfile: docker/linux/Dockerfile
+      context: docker/linux
       cache_from:
         - ghcr.io/kaidokert-personal-org/chromium/linux:latest
     image: ghcr.io/kaidokert-personal-org/chromium/linux:latest
