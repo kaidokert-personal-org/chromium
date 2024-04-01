@@ -64,14 +64,8 @@ jobs:
       - name: gn gen
         run: |
           cd src
-          gn gen out/Default
-      - name: ninja base_unittests
+          gn gen out/Default --args='cc_wrapper="sccache"'
+      - name: ninja sql_unittests
         run: |
           cd src
-          ninja -C out/Default base_unittests
-      - name: ninja net_unittests
-        run: |
-          cd src
-          ninja -C out/Default net_unittests
-      # - name: ninja url_unittests
-      # - name: ninja sql_unittests
+          ninja -C out/Default sql_unittests
