@@ -61,11 +61,17 @@ jobs:
         run: df -h
       - name: Du
         run: du -ht 500M
-      - name: Try gn gen ?
+      - name: gn gen
         run: |
           cd src
           gn gen out/Default
-      - name: Try ninja ?
+      - name: ninja base_unittests
         run: |
           cd src
           ninja -C out/Default base_unittests
+      - name: ninja net_unittests
+        run: |
+          cd src
+          ninja -C out/Default net_unittests
+      # - name: ninja url_unittests
+      # - name: ninja sql_unittests
