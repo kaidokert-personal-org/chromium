@@ -78,3 +78,5 @@ jobs:
           ninja -C out/Default base_unittests
       - name: sccache check
         run: sccache -s
+      - name: Any speed
+        run: echo Any speed
