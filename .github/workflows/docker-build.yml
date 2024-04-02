@@ -61,11 +61,22 @@ jobs:
         run: df -h
       - name: Du
         run: du -ht 500M
+      - name: Place sccache key
+        run: |
+          echo $SCCACHE_GCS_KEY | tr " " "\n" |  base64 -d > /root/key.json
+          cat /root/key.json
       - name: gn gen
         run: |
           cd src
           gn gen out/Default --args='cc_wrapper="sccache"'
-      - name: ninja sql_unittests
+      - name: sccache check
+        run: |
+          sccache --help
+          sccache -s
+      - name: ninja base_unittests
         run: |
           cd src
-          ninja -C out/Default sql_unittests
+          ninja -C out/Default base_unittests
+      - name: sccache check again
+        run: |
+          sccache -s
