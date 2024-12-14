@@ -29,6 +29,12 @@ class ShellContentRendererClient : public ContentRendererClient {
   ShellContentRendererClient();
   ~ShellContentRendererClient() override;
 
+  // Hackety hack
+  void SetRuntimeFeaturesDefaultsBeforeBlinkInitialization() override;
+  void RunScriptsAtDocumentStart(RenderFrame* render_frame) override;
+  void RunScriptsAtDocumentEnd(RenderFrame* render_frame) override;
+  // Endhack
+
   // ContentRendererClient implementation.
   void SetUpWebAssemblyTrapHandler() override;
   void RenderThreadStarted() override;
