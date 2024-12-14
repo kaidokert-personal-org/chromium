@@ -131,6 +131,7 @@ BrowserPluginGuestManager* ShellBrowserContext::GetGuestManager() {
 }
 
 storage::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
+  LOG(WARNING) << "GetSpecialStoragePolicy() not implemented";
   return nullptr;
 }
 

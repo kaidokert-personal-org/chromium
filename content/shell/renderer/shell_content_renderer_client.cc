@@ -46,6 +46,9 @@
 #include "v8/include/v8-initialization.h"
 #include "v8/include/v8.h"
 
+// hackhack
+#include "third_party/blink/public/web/web_script_source.h"
+
 #if BUILDFLAG(ENABLE_PLUGINS)
 #include "ppapi/shared_impl/ppapi_switches.h"  // nogncheck
 #endif
@@ -381,5 +384,21 @@ ShellContentRendererClient::CreatePrescientNetworking(
   return std::make_unique<network_hints::WebPrescientNetworkingImpl>(
       render_frame);
 }
+
+  void ShellContentRendererClient::SetRuntimeFeaturesDefaultsBeforeBlinkInitialization() {
+    LOG(WARNING) << "SetRuntimeFeaturesDefaultsBeforeBlinkInitialization() not implemented";
+  }
+
+  void ShellContentRendererClient::RunScriptsAtDocumentStart(RenderFrame* render_frame) {
+    LOG(WARNING) << "Should run scripts here";
+    blink::WebString script("console.log('Hello from RunScriptsAtDocumentStart');");
+    render_frame->GetWebFrame()->ExecuteScript(
+      blink::WebScriptSource(script));
+  }
+
+  void ShellContentRendererClient::RunScriptsAtDocumentEnd(RenderFrame* render_frame) {
+    LOG(WARNING) << "Should run scripts here";
+  }
+
 
 }  // namespace content
