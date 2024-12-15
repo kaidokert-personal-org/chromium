@@ -29,6 +29,9 @@ class ShellContentRendererClient : public ContentRendererClient {
   ShellContentRendererClient();
   ~ShellContentRendererClient() override;
 
+  // JS Injection hook
+  void RunScriptsAtDocumentStart(RenderFrame* render_frame) override;
+
   // ContentRendererClient implementation.
   void SetUpWebAssemblyTrapHandler() override;
   void RenderThreadStarted() override;
